@@ -13,12 +13,14 @@ jobs:
           distribution: 'temurin'
       - name: Unzip project
         run: unzip CrystalShadowRunner.zip
+      - name: Show folder structure
+        run: ls -la && ls -la CrystalShadowRunner/ || true
       - name: Make gradlew executable
-        run: chmod +x CrystalShadowRunner/gradlew
+        run: find . -name "gradlew" -exec chmod +x {} \;
       - name: Build APK
-        run: cd CrystalShadowRunner && ./gradlew assembleDebug
+        run: find . -name "gradlew" -exec dirname {} \; | head -1 | xargs -I{} sh -c 'cd {} && ./gradlew assembleDebug'
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: CrystalShadowRunner-APK
-          path: CrystalShadowRunner/app/build/outputs/apk/debug/app-debug.apk
+          path: '**/app/build/outputs/apk/debug/app-debug.apk'
